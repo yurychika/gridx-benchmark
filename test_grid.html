@@ -1,0 +1,89 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<title>Grid Benchmark Page</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel='stylesheet' href="../dojo-1.8/gridx/tests/support/common.css" />
+	<style>
+		@import "../dojo-1.8/dojox/grid/resources/claroGrid.css";
+	</style>
+	<style type="text/css">
+		#gridxContainer {
+			width: 800px;
+			height: 500px;
+			/*display: none;*/
+		}
+		#singleModuleResultContainer{
+			width: 100%;
+			height: 500px;
+			/*display: none;*/			
+		}
+		#doubleModuleResultContainer{
+			width: 100%;
+			height: 500px;
+			/*display: none;*/						
+		}
+		#dataGridContainer {
+			width: 800px;
+			height: 500px
+		}
+		
+		#grid {
+			width: 100%;
+			height: 100%;
+		}
+		#doubleModuleResultGrid{
+			width: 100%;
+			height: 100%;
+		}
+		#ctrlPane .dijitAccordionContainer {
+			height: auto;
+		}
+	</style>
+	<script type="text/javascript" src="../dojo-1.8/dojo/dojo.js"
+			data-dojo-config="async: true,
+								packages: [
+									{
+										name: 'gridx',
+										location: '../gridx'
+									}
+								]
+			
+		"></script>
+		<script type='text/javascript'>
+			
+			require(['dojo/parser'], function(parser){
+				parser.parse();
+			});
+		</script>
+		<script type="text/javascript" src='test_grid.js'></script>
+</head>
+<body class='claro'>
+	<h1 class='title' tabindex='0' onfocus='this.style.color="blue"' onblur='this.style.color=""'>
+		Grid Benchmark Page
+	</h1>
+	<div id='benchConfig'>
+		<!-- <div>
+			<span>Select Grids: </span>
+			<span>
+				<input id='gridxChbx'name='gridx' type='checkbox' data-dojo-type='dijit/form/CheckBox'><label for="gridx">gridx</label>			
+				<input id='datagridChbx' name='datagridChbx' type='checkbox' data-dojo-type='dijit/form/CheckBox'><label for="datagrid">datagrid</label>			
+			</span>
+		</div> -->
+		
+		<button id='benchBtn'>Start Bench</button>
+	</div>
+	<table border='0' cellspacing='0' cellpadding='0' width="100%"><tr>
+		<td class='pane'>
+			<div id='gridxContainer'></div>
+			<p>Single Module</p>
+			<div id='singleModuleResultContainer'></div>
+			<br>
+			<br>
+			<p>Double Modules</p>
+			<div id='doubleModuleResultContainer'></div>
+			
+		</td>
+	</tr></table>
+</body>
+</html>
