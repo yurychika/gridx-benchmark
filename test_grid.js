@@ -2,6 +2,8 @@ require([
 	'gridx/Grid',
 	'dojo/_base/array',
 	'dojo/_base/lang',
+	'dojo/query',
+	'dojo/dom-class',
 	'dojo/store/Memory',
 	'gridx/core/model/cache/Sync',
 	'gridx/tests/support/data/MusicData',
@@ -13,7 +15,7 @@ require([
 	'dojo/on',
 	'dijit/registry',
 	'dojo/_base/Deferred'
-], function(Grid, array, lang, Memory, Cache, dataSource, storeFactory, 
+], function(Grid, array, lang, query, domClass, Memory, Cache, dataSource, storeFactory, 
 			TestPane, DataGrid, ItemFileWriteStore, modules, on, registry, Deferred){
 
 	timeoutList = [];
@@ -303,8 +305,20 @@ require([
 			// modules: []
 			modules: [modules.SingleSort]
 		});
+		
+		grid2.connect(grid2.body, 'onRender', function(){
+			console.log('in timeout');
+			query('.gridxCell', grid2.bodyNode).forEach(function(cell){
+				console.log(cell.innerHTML);
+				if(cell.innerHTML == '&nbsp;'){
+					domClass.add(cell, 'empty');
+					console.log('this is empty');
+				}
+			})
+		});
+		
 		grid2.placeAt('doubleModuleResultContainer');
-		grid2.startup();		
+		grid2.startup();	
 	}
 	
 	destroy = function(){
