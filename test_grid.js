@@ -18,7 +18,7 @@ require([
 ], function(Grid, array, lang, query, domClass, Memory, Cache, dataSource, storeFactory, 
 			TestPane, DataGrid, ItemFileWriteStore, modules, on, registry, Deferred){
 
-	timeoutList = [];
+	var timeoutList = [];
 	var _setTimeout = setTimeout;
 	setTimeout = function(){
 		timeoutList.push(_setTimeout.apply(window, arguments));
@@ -66,15 +66,15 @@ require([
 		Edit: "edit",
 		SingleSort: "sort",
 		NestedSort: "sort",
-		// Pagination: "pagination",
-		// PaginationBar: "paginationBar",
-		// PaginationBarDD: "paginationBar",
-		// Filter: "filter",
-		// FilterBar: "filterBar",
-		// QuickFilter: "quickFilter",
-		// SelectRow: "selectRow",
-		// SelectColumn: "selectColumn",
-		// SelectCell: "selectCell",
+		Pagination: "pagination",
+		PaginationBar: "paginationBar",
+		PaginationBarDD: "paginationBar",
+		Filter: "filter",
+		FilterBar: "filterBar",
+		QuickFilter: "quickFilter",
+		SelectRow: "selectRow",
+		SelectColumn: "selectColumn",
+		SelectCell: "selectCell",
 		// ExtendedSelectRow: "selectRow",
 		// ExtendedSelectColumn: "selectColumn",
 		// ExtendedSelectCell: "selectCell",
@@ -166,6 +166,7 @@ require([
 	};
 	
 	runBench = function(){
+		_init();
 		console.log(config);
 		grids = [];
 		singleModResult = [];
@@ -231,13 +232,10 @@ require([
 			}
 		}
 // 		
-		
-		
 		console.log(singleModResult);
 		var d = new Deferred();
-		runcase(d);
-		
-		d.then(function(){
+		dojo.byId('gridxContainer').style.display = 'block';
+		runcase(d).then(function(){
 			dojo.byId('gridxContainer').style.display = 'none';
 			console.log(doubleModResult);
 			generateResult();
@@ -246,9 +244,7 @@ require([
 	
 	runcase = function(d){
 		var c = cases[caseIndex];
-		
-		// console.log(cases);
-		
+
 		console.log('case index is: ', caseIndex);
 		if(c){
 			create('gridx', c.config, c.mods, c.type).then(function(){
@@ -258,7 +254,7 @@ require([
 		}else{
 			d.callback();
 		}
-		// return d;
+		return d;
 	}
 
 	generateResult = function(){
@@ -272,15 +268,17 @@ require([
 				{id: 1, name: 'module', field: 'module'},
 				{id: 2, name: 'benchmark', field: 'benchmark'}
 			];
-		window.grid = new Grid({
-			id: 'grid',
+		var grid1 = new Grid({
+			id: 'singleModResultGrid',
 			cacheClass: Cache,
 			store: store,
 			structure: layout,
-			modules: [modules.SingleSort]
+			modules: [modules.SingleSort],
+			autoHeight: true
 		});
-		grid.placeAt('singleModuleResultContainer');
-		grid.startup();
+		dojo.byId('singleModuleResultContainer').style.display = 'block';
+		grid1.placeAt('singleModuleResultContainer');
+		grid1.startup();
 
 		
 		var dr = [];
@@ -298,25 +296,42 @@ require([
 		}
 		console.log(layout);
 		var grid2 = new Grid({
-			id: 'doubleModuleResultGrid',
+			id: 'doubleModResultGrid',
 			cacheClass: Cache,
 			store: store,
 			structure: layout,
 			// modules: []
-			modules: [modules.SingleSort]
+			modules: [modules.SingleSort],
+			autoHeight: true
 		});
+		
+		grid2.connect(grid2, 'onCellMouseOver', function(evt){
+			var colid = evt.columnId;
+			query('.gridxCell', grid2.bodyNode).forEach(function(cell){
+				if(cell.getAttribute('colid') == colid){
+					domClass.add(cell, 'colHover');
+				}
+			});
+		});
+		
+		grid2.connect(grid2, 'onCellMouseOut', function(evt){
+			var colid = evt.columnId;
+			query('.gridxCell', grid2.bodyNode).forEach(function(cell){
+				if(cell.getAttribute('colid') == colid){
+					domClass.remove(cell, 'colHover');
+				}
+			});
+		});		
 		
 		grid2.connect(grid2.body, 'onRender', function(){
 			console.log('in timeout');
 			query('.gridxCell', grid2.bodyNode).forEach(function(cell){
-				console.log(cell.innerHTML);
 				if(cell.innerHTML == '&nbsp;'){
 					domClass.add(cell, 'empty');
-					console.log('this is empty');
 				}
 			})
 		});
-		
+		dojo.byId('doubleModuleResultContainer').style.display = 'block';
 		grid2.placeAt('doubleModuleResultContainer');
 		grid2.startup();	
 	}
@@ -429,7 +444,17 @@ require([
 		}
 		create();
 	}
-
+	
+	_init = function(){
+		var s = dijit.registry.byId('singleModResultGrid'),
+			d = dijit.registry.byId('doubleModResultGrid');
+		
+		if(s) s.destroy();
+		if(d) d.destroy();
+		
+		dojo.byId('gridxContainer').style.display = 'block';
+					
+	}
 	//Test buttons
 	// var tp = new TestPane({});
 	// tp.placeAt('ctrlPane');
