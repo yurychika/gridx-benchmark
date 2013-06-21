@@ -10,7 +10,21 @@
 			height: 500px;
 			/*display: none;*/
 		}
-
+		#progress{
+			margin-top: 10px;
+			display: none;
+		}
+		
+		#progressBarWrapper{
+			display: block;
+			padding: 2px;
+			border: 1px solid #ccc;
+		}
+		#progressBar{
+			background-color: indianred;
+			height: 20px;
+			width: 0%;
+		}
 		#singleModuleResultContainer{
 			width: 100%;
 			display: none;
@@ -80,6 +94,13 @@
 	<table border='0' cellspacing='0' cellpadding='0' width="100%"><tr>
 		<td class='pane'>
 			<div id='gridxContainer'></div>
+			<div id='progress'>
+				<div id='progressBarWrapper'>
+					<div id='progressBar'></div>
+				</div>
+				<div id='progressNumber'>0%	</div>
+				
+			</div>
 			<p>Single Module</p>
 			<div id='singleModuleResultContainer'></div>
 			<br>

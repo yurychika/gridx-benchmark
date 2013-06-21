@@ -35,14 +35,63 @@ require([
 	var columnSetIdx = 0;
 	var cases = [];
 	var caseIndex = 0;
+	var caseCount = 0;
 	var store = storeFactory({
 		dataSource: dataSource,
 		size: 100
 	});
+	var pb = dojo.byId('progressBar');
+	var pn = dojo.byId('progressNumber');
 	
-	
-	var layout = dataSource.layouts[columnSetIdx];
-	
+	var layout = [
+			{id: 'id', field: 'id', name: 'Identity', width: '80px'},
+			{id: 'order', field: 'order', name: 'Order', width: '80px'},
+			{id: 'Genre', field: 'Genre', name: 'Genre', width: '100px', alwaysEditing: true,
+				decorator: function(){
+				//Generate cell widget template string
+					return [
+						'<button data-dojo-type="dijit.form.Button" ',
+						'data-dojo-attach-point="btn" ',
+						'data-dojo-props="onClick: function(){',
+							'alert(this.get(\'label\'));',
+						'}"></button>'
+					].join('');
+				}, widgetsInCell: true,
+				setCellValue: function(data){
+					//"this" is the cell widget
+					this.btn.set('label', data);
+					console.log('data is', data);
+				}
+			
+			},
+			{id: 'Artist', field: 'Artist', name: 'Artist', width: '120px'},
+			{id: 'Year', field: 'Year', name: 'Year', width: '80px',alwaysEditing: true,
+				decorator: function(){
+				//Generate cell widget template string
+					return [
+						'<button data-dojo-type="dijit.form.Button" ',
+						'data-dojo-attach-point="btn" ',
+						'data-dojo-props="onClick: function(){',
+							'alert(this.get(\'label\'));',
+						'}"></button>'
+					].join('');
+				}, widgetsInCell: true,
+				setCellValue: function(data){
+					//"this" is the cell widget
+					this.btn.set('label', data);
+					console.log('data is', data);
+				}
+			
+			},
+			{id: 'Album', field: 'Album', name: 'Album', width: '160px'},
+			{id: 'Name', field: 'Name', name: 'Name', width: '80px'},
+			{id: 'Length', field: 'Length', name: 'Length', width: '80px',alwaysEditing: true},
+			{id: 'Track', field: 'Track', name: 'Track', width: '80px'},
+			{id: 'Composer', field: 'Composer', name: 'Composer', width: '160px'},
+			{id: 'Download Date', field: 'Download Date', name: 'Download Date', width: '160px'},
+			{id: 'Last Played', field: 'Last Played', name: 'Last Played', width: '120px'},
+			{id: 'Heard', field: 'Heard', name: 'Heard', width: '80px'}
+	];
 	// var modules = {
 		// 'sort': ['gridx/modules/SingleSort'],
 		// 'pagination': ['gridx/modules/Pagination', 'gridx/modules/pagination/PaginationBar'],
@@ -63,18 +112,18 @@ require([
 		ColumnResizer: "columnResizer",
 		NavigableCell: "navigableCell",
 		CellWidget: "cellWidget",
-		Edit: "edit",
-		SingleSort: "sort",
-		NestedSort: "sort",
-		Pagination: "pagination",
-		PaginationBar: "paginationBar",
-		PaginationBarDD: "paginationBar",
-		Filter: "filter",
-		FilterBar: "filterBar",
-		QuickFilter: "quickFilter",
-		SelectRow: "selectRow",
-		SelectColumn: "selectColumn",
-		SelectCell: "selectCell",
+		// Edit: "edit",
+		// SingleSort: "sort",
+		// NestedSort: "sort",
+		// Pagination: "pagination",
+		// PaginationBar: "paginationBar",
+		// PaginationBarDD: "paginationBar",
+		// Filter: "filter",
+		// FilterBar: "filterBar",
+		// QuickFilter: "quickFilter",
+		// SelectRow: "selectRow",
+		// SelectColumn: "selectColumn",
+		// SelectCell: "selectCell",
 		// ExtendedSelectRow: "selectRow",
 		// ExtendedSelectColumn: "selectColumn",
 		// ExtendedSelectCell: "selectCell",
@@ -231,12 +280,13 @@ require([
 				cases.push({config: lang.clone(config), mods: [i, j], type: '2mods'});
 			}
 		}
-// 		
-		console.log(singleModResult);
+
+		caseCount = cases.length;	
 		var d = new Deferred();
 		dojo.byId('gridxContainer').style.display = 'block';
 		runcase(d).then(function(){
 			dojo.byId('gridxContainer').style.display = 'none';
+			dojo.byId('progress').style.display=  'none';
 			console.log(doubleModResult);
 			generateResult();
 		});
@@ -249,6 +299,9 @@ require([
 		if(c){
 			create('gridx', c.config, c.mods, c.type).then(function(){
 				caseIndex++;
+				var progress  = Math.floor(caseIndex / caseCount * 100);
+				pb.style.width = progress + '%';
+				pn.innerHTML = 'Progress: ' + progress + '%';		
 				runcase(d);
 			})
 		}else{
@@ -443,18 +496,27 @@ require([
 			});
 		}
 		create();
-	}
+	};
 	
 	_init = function(){
 		var s = dijit.registry.byId('singleModResultGrid'),
 			d = dijit.registry.byId('doubleModResultGrid');
 		
+		caseIndex = 0;
+		
 		if(s) s.destroy();
 		if(d) d.destroy();
 		
 		dojo.byId('gridxContainer').style.display = 'block';
+		dojo.byId('progress').style.display = 'block';
 					
+	};
+	
+	_updateProgress = function(p){
+		pb.style.width = p + '%';
+		pn.innerHTML = 'Progress: ' + p + '%';		
 	}
+	
 	//Test buttons
 	// var tp = new TestPane({});
 	// tp.placeAt('ctrlPane');
